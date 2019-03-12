@@ -22,7 +22,7 @@ class RollHandler(tornado.web.RequestHandler):
 		sp = int(self.get_argument('second_prize'))
 		tp = int(self.get_argument('third_prize'))
 
-#		self.render('poem.html',player=player)
+#		self.render('final.html',player=player)
 		tot = len(player)
 		now = tot
 			
@@ -60,7 +60,7 @@ class RollHandler(tornado.web.RequestHandler):
 			now=now-1
 			tp=tp-1
 		
-		self.render('poem.html',fp=fpplayer,sp=spplayer,tp=tpplayer)
+		self.render('final.html',fp=fpplayer,sp=spplayer,tp=tpplayer)
 
 if __name__ == "__main__":
 	tornado.options.parse_command_line()
