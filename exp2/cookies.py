@@ -4,7 +4,6 @@ import tornado.web
 import tornado.websocket
 import tornado.options
 import os.path
-import json
 
 from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
@@ -14,8 +13,9 @@ inRoom = dict()							#查询usr在哪个聊天室
 
 
 class BaseHandler(tornado.web.RequestHandler):
-    def get_current_user(self):
-        return self.get_secure_cookie("username")
+	def get_current_user(self):
+		pass
+		return self.get_secure_cookie("username")
 
 class LoginHandler(BaseHandler):
     def get(self):
@@ -30,6 +30,7 @@ class WelcomeHandler(BaseHandler):
 	def get(self):
 		roomCnt = self.application.rooms.getRooms()
 		self.render('index.html', user=self.current_user,roomCnt=roomCnt)
+#		self.render('index.html', user="self.current_user",roomCnt=roomCnt)
 
 class LogoutHandler(BaseHandler):
 	def get(self):
@@ -44,6 +45,7 @@ class LogoutHandler(BaseHandler):
 class Rooms(object):
 	cnt = 0
 	callbacks = []
+
 	def register(self,callback):
 		self.callbacks.append(callback)
 	def unregister(self,callback):
@@ -75,7 +77,7 @@ class StatusHandler(tornado.websocket.WebSocketHandler):
 	def on_message(self,message):
 		pass
 	def callback(self,count):
-		self.write_message('{"roomCnt":"%d"}' % count)	
+		self.write_message('{"cnt":"%d"}' % count)	
 
 #############################################################################
 

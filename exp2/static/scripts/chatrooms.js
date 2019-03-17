@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	xsrf = getCookie("_xsrf");
 
-	setTimeout(addRoom,100);
+	setTimeout(requestRoom,100);
 
 	$('#logout').click(function(event){
 		jQuery.ajax({
@@ -25,7 +25,6 @@ $(document).ready(function(){
 			type:'POST',
 			data:{
 				_xsrf: xsrf,
-				roomCnt:document.roomCnt,
 				action:'add'
 			},	
 			dataType:'json',
@@ -34,36 +33,30 @@ $(document).ready(function(){
 				$(event.target).attr('disabled','disabled');
 			},
 			success: function(data,status,xhr){
-				window.location.href='http://localhost:8000/'
+				$(event.target).removeAttr('disabled');
 			}
 		});
 	});
 });
 
 
-
-//function requestRooms(){
-//	jQuery.getJSON('//localhost:8000/qRoom')
-	
-//}
-
 function getCookie(name){
 	var c = document.cookie.match("\\b"+name+"=([^;]*)\\b");
 	return c ? c[1]:undefined;
-}
-function addRoom(cnt){
-	if(cnt==100){
-		return;
-	}
-	var host = 'ws://localhost:8000/status'
+};
+
+function requestRoom(){
+
+	var host = 'ws://localhost:8000/status';
 	var websocket = new WebSocket(host);
 
 	websocket.onopen = function(evt){ };
 	websocket.onmessage = function(evt){
-		$('#roomCnt').html($.parseJSON(evt.data)['roomCnt']);
+		$('#roomCnt').html($.parseJSON(evt.data)['cnt']);
 	};
 	websocket.onerror = function(evt){ };
-}
+};
+
 function join(){
 	
 }
