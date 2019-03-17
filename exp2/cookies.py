@@ -82,9 +82,9 @@ class StatusHandler(tornado.websocket.WebSocketHandler):
 #############################################################################
 
 class JoinHandler(BaseHandler):
-	def get(self):
+	def post(self):
 		roomid = self.get_argument("roomid",0)
-		room[roomid].append(self.current_user)
+		room[int(roomid)].append(self.current_user)
 
 		self.render('chatroom.html',user=self.current_user)
 
@@ -96,7 +96,7 @@ class Application(tornado.web.Application):
 			"template_path": os.path.join(os.path.dirname(__file__), "templates"),
 			"static_path": 'static',
 			"cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
-			"xsrf_cookies": True,
+#			"xsrf_cookies": True,
 			"login_url": "/login"
 		}
 		handlers = [
@@ -106,6 +106,7 @@ class Application(tornado.web.Application):
 			(r'/rooms',RoomsHandler),
 			(r'/status',StatusHandler),
 			(r'/join',JoinHandler),
+
 		]
 
 		tornado.web.Application.__init__(self,handlers,**settings)

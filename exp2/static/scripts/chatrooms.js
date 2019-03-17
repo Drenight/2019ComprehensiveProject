@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	xsrf = getCookie("_xsrf");
+//	xsrf = getCookie("_xsrf");
 
 	setTimeout(requestRoom,100);
 
@@ -8,7 +8,7 @@ $(document).ready(function(){
 			url:'//localhost:8000/logout',
 			type:'GET',
 			data:{
-				_xsrf: xsrf,
+//				_xsrf: xsrf,
 				user: document.user,
 				logout: 'logout'
 			},
@@ -24,7 +24,7 @@ $(document).ready(function(){
 			url:'//localhost:8000/rooms',
 			type:'POST',
 			data:{
-				_xsrf: xsrf,
+//				_xsrf: xsrf,
 				action:'add'
 			},	
 			dataType:'json',
