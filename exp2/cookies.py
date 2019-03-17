@@ -14,7 +14,6 @@ inRoom = dict()							#查询usr在哪个聊天室
 
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
-		pass
 		return self.get_secure_cookie("username")
 
 class LoginHandler(BaseHandler):
