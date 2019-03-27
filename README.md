@@ -7,3 +7,4 @@
 - h5前端，tornado+python后端
 
 #### exp2：聊天室
+- h5前端，tornado+python后端，websocket通信
