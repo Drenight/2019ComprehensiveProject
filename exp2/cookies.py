@@ -1,3 +1,4 @@
+import json
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -8,9 +9,20 @@ import os.path
 from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 
-room = [list() for i in range(100)]		#最大100个聊天室
-inRoom = dict()							#查询usr在哪个聊天室
+class Message:		#消息
+	sender=""
+	text=""
+	roomID=""
+	time=""
 
+	def __init__(sender,text,roomID,time):
+		self.sender=sender
+		self.text=text
+		self.roomID=roomID
+		self.time=time
+
+
+###############################################################################
 
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
@@ -32,13 +44,9 @@ class WelcomeHandler(BaseHandler):
 #		self.render('index.html', user="self.current_user",roomCnt=roomCnt)
 
 class LogoutHandler(BaseHandler):
-	def get(self):
-		if (self.get_argument("logout", None)):
-			if self.current_user in inRoom:
-				room[inRoom[self.current_user]].remove(self.current_user)
-			
-			self.clear_cookie("username")
-			self.redirect("/")
+	def get(self):		
+		self.clear_cookie("username")
+		self.redirect("/")
 ##############################################################################
 
 class Rooms(object):
@@ -80,17 +88,51 @@ class StatusHandler(tornado.websocket.WebSocketHandler):
 
 #############################################################################
 
+
+class chatRoom(object):
+	callbacks = {}
+	def register(self,callback):
+		roomID = str(callback.get_argument("roomID"))
+		if roomID in self.callbacks:
+			self.callbacks[roomID].append(callback)
+		else:
+			self.callbacks[roomID]=[callback]	
+
+	def unregister(self,callback):
+		roomID = str(callback.get_argument("roomID"))
+		self.callbacks[roomID].remove(callback)
+	
+	def callbackMessage(self,callback,message):
+		roomID = str(callback.get_argument("roomID"))
+		sender = str(callback.get_argument("sender"))
+		message = {
+			"mes":message,
+			"sender":sender
+		}
+		self.board(roomID,message)
+	def board(self,roomID,message):
+		for callback in self.callbacks[roomID]:
+			callback.write_message(json.dumps(message))
+
 class JoinHandler(BaseHandler):
 	def post(self):
-		roomid = self.get_argument("roomid",0)
-		room[int(roomid)].append(self.current_user)
+		roomid=self.get_argument("roomid",0)
+		self.render('chatroom.html',user=self.current_user,roomID=roomid)
 
-		self.render('chatroom.html',user=self.current_user)
+
+class WriteHandler(tornado.websocket.WebSocketHandler):
+	def open(self):
+		self.application.chatRoom.register(self)
+	def on_close(self):
+		self.application.chatRoom.unregister(self)
+	def on_message(self,message):
+		self.application.chatRoom.callbackMessage(self,message)
 
 class Application(tornado.web.Application):
 	def __init__(self):
 		self.rooms = Rooms()
-		
+		self.chatRoom = chatRoom()
+
 		settings = {
 			"template_path": os.path.join(os.path.dirname(__file__), "templates"),
 			"static_path": 'static',
@@ -105,7 +147,7 @@ class Application(tornado.web.Application):
 			(r'/rooms',RoomsHandler),
 			(r'/status',StatusHandler),
 			(r'/join',JoinHandler),
-
+			(r'/write/',WriteHandler),
 		]
 
 		tornado.web.Application.__init__(self,handlers,**settings)

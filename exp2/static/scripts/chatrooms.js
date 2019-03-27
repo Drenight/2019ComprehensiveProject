@@ -56,8 +56,3 @@ function requestRoom(){
 	};
 	websocket.onerror = function(evt){ };
 };
-
-function join(){
-	
-}
-

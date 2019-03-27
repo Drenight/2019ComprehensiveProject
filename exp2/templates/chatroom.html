@@ -1,7 +1,57 @@
 <html>
-	<head><title>ChatRoom</title></head>
+
+	<head>
+		<title>ChatRoom</title>
+		<!DOCTYPE<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+		type="text/javascript"</script>
+		<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+
+		<script>
+			$(document).ready(function(){
+	
+				$('#sendMes').click(function(){
+					sendText()	
+				})
+
+				sender=$("#user").val()
+				roomID=$("#roomID").val()
+
+				function requestText(){
+					host="ws://localhost:8000/write/?sender=" + sender + "&roomID=" +roomID
+					ws=new WebSocket(host);
+
+					ws.onopen = function(event){}
+					ws.onmessage = function(event){
+						data = $.parseJSON(event.data);
+						
+						$('#chat').append(data['sender']+":<br>"+data['mes']+"<br>");
+					}	
+					ws.onerror = function(event){}
+				}	
+				
+				requestText();
+
+				function sendText(){
+					ws.send($("#input").val());
+				}
+			})
+		</script>
+	</head>
 	<body>
-		<h1>OHHHHHHHHHHHHHH</h1>
+		<h1>Chatroom {{roomID}}</h1>
+		<h1>Welcome,{{user}}</h1>
+
+		<input type="hidden" value="{{roomID}}" id="roomID">
+		<input type="hidden" value="{{user}}" id="user">
+
+		<div id="chat" style="padding:100px;border: 1px solid#888">
+		</div>
+
+		<div id="write">
+			<input type="text" name="input" id="input">
+			<input type="submit" value="write" id="sendMes">	
+		</div>
+
 	</body>
 </html>
 
