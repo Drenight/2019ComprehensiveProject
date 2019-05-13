@@ -40,6 +40,7 @@ class ImageHandler(tornado.web.RequestHandler):
 		p.paste(im,(0,0,x,y),im)
 		p.save('in2.png')
 
+		time.sleep(5)
 		global ans
 		ans = test.main()
 		
