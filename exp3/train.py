@@ -66,7 +66,7 @@ saver = tf.train.Saver()
 #创建Session和变量初始化
 sess = tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
-#标准训练是20000步,这里为节约时间训练1000步
+#标准训练是20000步
 for i in range(20000):
   batch = mnist.train.next_batch(50)
   if i%100 == 0:#每100步输出一次在验证集上的准确度

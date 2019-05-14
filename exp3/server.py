@@ -18,10 +18,12 @@ ans=123
 
 define('port',default=8000,help='run on the given port',type=int)
 
+#初始handle
 class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.render('index.html')
 
+#接收图片并转换为黑底白字，调用识别程序
 class ImageHandler(tornado.web.RequestHandler):
 	def post(self):
 		pp = self.get_argument('pp')

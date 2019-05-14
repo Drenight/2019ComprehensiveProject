@@ -48,13 +48,13 @@
 			falge=false;
 			cxt.beginPath();
 		}
-	
+///////////////////////////////////////////////////////////////////
 		$('#sendMes').click(function(){	
 			var canva = document.getElementById('canvas');
 			var dataURL = canva.toDataURL("image/png");
 			var imageDataB64 = dataURL.substring(22);
 
-			$.ajax({
+			$.ajax({	//b64编码图片，ajxa传输后台
 				type:"POST",
 				url:"//localhost:8000/img",
 				//data:{pp:1},
