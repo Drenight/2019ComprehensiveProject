@@ -1,0 +1,74 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+<title>Welcome Back!</title>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+			type="text/javascript"></script>
+
+<script>
+	
+///////////////////////////////////////////////////////////////////
+
+
+	window.onload = function(){
+		var input = document.getElementById("fileinput");
+		var txshow = document.getElementById("txshow");
+		input.addEventListener('change',readFile,false);
+		txshow.onclick = function(){input.click();}
+
+		$('#sendMes').click(function(){	
+
+			var img = document.getElementById('ans').innerText;
+
+			$.ajax({	//b64编码图片，ajxa传输后台
+				type:"POST",
+				url:"//localhost:8000/img",
+				//data:{pp:1},
+				data:{pp:img},
+				success: function(){
+					//alert("success");
+					window.location.href="http://localhost:8000/ans"
+				},
+				error: function(){
+					alert("error");
+				}
+			});
+		});
+
+
+		function readFile(){
+			var file=this.files[0];
+			var reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = function(e){
+				txshow.src = this.result;
+				document.getElementById("ans").innerText=this.result.substring(22);
+			}
+		}
+
+	}
+
+
+
+
+
+
+</script>
+
+
+
+</head>
+<body style="margin:0">
+
+	<input type="file" id="fileinput" />
+	<img id="txshow" style="width:100px;height:100px;" />
+	<input type="submit" name="上传" value="识别" id="sendMes"/>
+	<br/>解析后的base64数据:<br/>
+	<p id="ans"></p>
+
+
+
+</body>
+</html>
+
